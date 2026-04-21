@@ -50,6 +50,6 @@ The proposal explicitly does not choose a post-quantum signature algorithm. Auth
 
 - BIP 360 draft: https://github.com/bitcoin/bips/blob/master/bip-0360.mediawiki
 - BIP 361 draft: https://github.com/bitcoin/bips/blob/master/bip-0361.mediawiki
-- Bitcoin Dev mailing list thread (Feb 2026): https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2026-February/
+- Bitcoin Dev mailing list archive: https://groups.google.com/g/bitcoindev
 - Co-author thread by Hunter Beast & Ethan Heilman: search bitcoin-dev for "Pay-to-Merkle-Root"
 - Jameson Lopp's public comments: https://x.com/lopp (search "quantum sunset")

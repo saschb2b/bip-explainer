@@ -4,14 +4,14 @@
     "summary": "Some developers argue that disabling legacy signatures is a de-facto hard fork because it invalidates previously valid transactions. Others maintain that because the change only tightens validation rules for old output types, it fits the standard definition of a soft fork.",
     "type": "definitional",
     "typeDescription": "A disagreement about definitions or terminology. Both sides may be using the same word differently.",
-    "link": "https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2026-April/"
+    "link": "https://unchainedcrypto.com/hoskinson-says-bitcoins-quantum-proposal-is-a-disguised-hard-fork-that-leaves-1-7-million-btc-unrecoverable-unchained/"
   },
   {
     "title": "Pre-2013 coins can't use zk-recovery",
     "summary": "Satoshi-era P2PK outputs and early mined blocks have no BIP-39 seed phrase. Phase C's zk-recovery mechanism assumes modern wallet backups. If Phase B activates before Phase C is complete, those coins are frozen with no known recovery path.",
     "type": "factual",
     "typeDescription": "A disagreement about facts or empirical claims. In principle, evidence could settle this.",
-    "link": "https://github.com/bitcoin/bips/pull/XXXX"
+    "link": "https://github.com/bitcoin/bips/blob/master/bip-0361.mediawiki"
   },
   {
     "title": "Is freezing better than allowing theft?",
