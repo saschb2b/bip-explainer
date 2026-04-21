@@ -2,7 +2,7 @@
 
 A static, layered explainer for blockchain protocol proposals. The MVP covers Bitcoin's BIP 360 (Pay-to-Merkle-Root) and BIP 361 (Post-Quantum Migration and Legacy Signature Sunset).
 
-**Live site:** [https://sascha.github.io/bip-explainer](https://sascha.github.io/bip-explainer)
+**Live site:** [https://saschb2b.github.io/bip-explainer](https://saschb2b.github.io/bip-explainer)
 
 ## What this is
 
