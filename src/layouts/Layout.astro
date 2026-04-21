@@ -1,10 +1,13 @@
 ---
+import "../styles/global.css";
+
 export interface Props {
   title: string;
   description?: string;
 }
 
 const { title, description = "A layered explainer for blockchain protocol proposals." } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <!DOCTYPE html>
@@ -14,102 +17,16 @@ const { title, description = "A layered explainer for blockchain protocol propos
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
   <meta name="description" content={description} />
-  <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/favicon.svg`} />
-  <style is:global>
-    @import "tailwindcss";
-    @theme {
-      --color-accent-50: #f0fdfa;
-      --color-accent-100: #ccfbf1;
-      --color-accent-200: #99f6e4;
-      --color-accent-600: #0d9488;
-      --color-accent-700: #0f766e;
-      --color-accent-900: #134e4a;
-    }
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      color: #111827;
-      background: #ffffff;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    .prose-custom p + p {
-      margin-top: 1rem;
-    }
-    .prose-custom h3 {
-      font-weight: 600;
-      margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: #111827;
-    }
-    .prose-custom ul {
-      list-style: disc;
-      padding-left: 1.25rem;
-      margin-top: 0.75rem;
-    }
-    .prose-custom li + li {
-      margin-top: 0.35rem;
-    }
-    .prose-custom a {
-      color: #0f766e;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-    .prose-custom a:hover {
-      color: #134e4a;
-    }
-    [data-tab-panel] {
-      display: none;
-    }
-    [data-tab-panel].active {
-      display: block;
-    }
-    [data-impact-result] {
-      display: none;
-    }
-    [data-impact-result].active {
-      display: block;
-    }
-    .tooltip {
-      position: relative;
-    }
-    .tooltip .tooltip-text {
-      visibility: hidden;
-      opacity: 0;
-      position: absolute;
-      z-index: 50;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 16rem;
-      background: #111827;
-      color: #fff;
-      font-size: 0.8rem;
-      line-height: 1.4;
-      padding: 0.6rem 0.75rem;
-      border-radius: 0.375rem;
-      text-align: left;
-      pointer-events: none;
-      transition: opacity 0.15s;
-    }
-    .tooltip .tooltip-text::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      margin-left: -5px;
-      border-width: 5px;
-      border-style: solid;
-      border-color: #111827 transparent transparent transparent;
-    }
-    .tooltip:hover .tooltip-text,
-    .tooltip:focus-within .tooltip-text {
-      visibility: visible;
-      opacity: 1;
-    }
-  </style>
+  <link rel="icon" type="image/svg+xml" href={`${baseUrl}/favicon.svg`} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
   <slot />
-  <script src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/scripts/main.js`}></script>
+  <script src={`${baseUrl}/scripts/main.js`}></script>
 </body>
 </html>

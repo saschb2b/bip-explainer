@@ -3,7 +3,7 @@ export interface Props {
   voices: {
     name: string;
     role: string;
-    roleType: string;
+    roleType: "author" | "critic" | "alternative";
     position: string;
     sourceUrl: string;
   }[];
@@ -11,38 +11,77 @@ export interface Props {
 
 const { voices } = Astro.props;
 
-const roleStyles: Record<string, string> = {
-  author: "bg-accent-50 text-accent-700 border-accent-100",
-  critic: "bg-red-50 text-red-700 border-red-100",
-  alternative: "bg-blue-50 text-blue-700 border-blue-100",
+type Stance = { x: number; y: number; stance: "for" | "against" | "alternative" };
+
+const stances: Record<string, Stance> = {
+  "Jameson Lopp": { x: 78, y: 55, stance: "for" },
+  "Charles Hoskinson": { x: 12, y: 55, stance: "against" },
+  "Eli Ben-Sasson / StarkWare": { x: 35, y: 18, stance: "alternative" },
+  "BitMEX Research": { x: 58, y: 18, stance: "alternative" },
 };
 
-function initials(name: string) {
-  return name.split(" ").map(p => p[0]).join("").slice(0, 2).toUpperCase();
+function initials(name: string): string {
+  return name
+    .split(/[\s\/]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((s) => s[0])
+    .join("")
+    .toUpperCase();
 }
 ---
 
-<section class="py-12 sm:py-16 bg-white" id="voices">
-  <div class="max-w-3xl mx-auto px-6">
-    <h2 class="text-xl font-semibold text-gray-900 mb-6">Voices</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {voices.map((voice) => (
-        <a href={voice.sourceUrl} target="_blank" rel="noopener noreferrer" class="group block bg-white rounded-lg border border-gray-100 p-5 shadow-sm hover:shadow transition-shadow">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-full bg-gray-900 text-white flex items-center justify-center text-sm font-bold">
-              {initials(voice.name)}
-            </div>
-            <div class="min-w-0">
-              <p class="text-sm font-semibold text-gray-900 truncate">{voice.name}</p>
-              <span class={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium border ${roleStyles[voice.roleType] || roleStyles.alternative}`}>
-                {voice.role}
-              </span>
-            </div>
-          </div>
-          <p class="text-sm text-gray-600 leading-relaxed line-clamp-4">{voice.position}</p>
-          <span class="mt-3 inline-block text-xs text-gray-400 group-hover:text-accent-700 transition-colors">Read primary source →</span>
-        </a>
-      ))}
+<section class="bip-section vs">
+  <div class="sec-eyebrow">06 — Who's saying what</div>
+  <h2 class="sec-title">Positioned, not ranked.</h2>
+  <p class="sec-lede">
+    Author and critic sit on a For ↔ Against axis. Alternative proposals sit above it — they don't
+    oppose, they reroute.
+  </p>
+
+  <div class="vs-plot">
+    <div class="vs-plot-frame">
+      <span class="vs-plot-label vs-plot-label--top">Alternative proposals</span>
+      <span class="vs-plot-label vs-plot-label--left">Against</span>
+      <span class="vs-plot-label vs-plot-label--right">For</span>
+      <div class="vs-plot-axis-h"></div>
+      <div class="vs-plot-axis-v"></div>
+
+      {voices.map((v, i) => {
+        const s = stances[v.name];
+        if (!s) return null;
+        return (
+          <button
+            type="button"
+            class={`vs-node vs-node--${s.stance}`}
+            data-voice={i}
+            style={`left: ${s.x}%; top: ${s.y}%;`}
+            aria-label={`${v.name} — ${v.role}`}
+          >
+            <span class="vs-node-avatar">{initials(v.name)}</span>
+            <span class="vs-node-label">{v.name}</span>
+          </button>
+        );
+      })}
     </div>
+  </div>
+
+  <div class="vs-cards">
+    {voices.map((v, i) => (
+      <div class="vs-card" data-voice={i}>
+        <div class="vs-card-hd">
+          <span class="vs-card-avatar">{initials(v.name)}</span>
+          <div class="vs-card-titles">
+            <div class="vs-card-name">{v.name}</div>
+            <div class="vs-card-role">{v.role}</div>
+          </div>
+          <span class={`vs-card-tag vs-card-tag--${v.roleType}`}>{v.roleType}</span>
+        </div>
+        <div class="vs-card-pos">{v.position}</div>
+        <a class="vs-card-src" href={v.sourceUrl} target="_blank" rel="noopener noreferrer">
+          Primary source →
+        </a>
+      </div>
+    ))}
   </div>
 </section>

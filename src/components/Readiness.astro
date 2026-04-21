@@ -1,0 +1,68 @@
+---
+export interface Props {
+  signals: {
+    coreImplementation: string;
+    nodeSignaling: string;
+    predictionMarket: string;
+    historicalAnalog: string;
+  };
+}
+
+const { signals } = Astro.props;
+
+const score = 8;
+const totalDots = 40;
+const filled = Math.round((score / 100) * totalDots);
+
+const rows = [
+  { label: "Core implementation", value: signals.coreImplementation, state: "none" },
+  { label: "Node signaling", value: signals.nodeSignaling, state: "na" },
+  { label: "Prediction market", value: signals.predictionMarket, state: "none" },
+  { label: "Historical analog", value: signals.historicalAnalog, state: "note" },
+];
+---
+
+<section class="bip-section">
+  <div class="sec-eyebrow">04 — Readiness</div>
+  <h2 class="sec-title">How close is this to actually happening?</h2>
+  <p class="sec-lede">
+    A composite read, not a forecast. Every item below moves independently; today most of them are
+    flat.
+  </p>
+
+  <div class="rdy-meter">
+    <div class="rdy-meter-scale">
+      <span>proposed</span>
+      <span>drafting</span>
+      <span>implementing</span>
+      <span>signaling</span>
+      <span>activated</span>
+    </div>
+    <div class="rdy-meter-dots">
+      {Array.from({ length: totalDots }).map((_, i) => (
+        <span class={`rdy-dot ${i < filled ? "rdy-dot--on" : ""}`}></span>
+      ))}
+    </div>
+    <div class="rdy-meter-marker" style={`left: ${score}%;`}>
+      <span class="rdy-meter-marker-line"></span>
+      <span class="rdy-meter-marker-tag">{score}% — early draft</span>
+    </div>
+  </div>
+
+  <div class="rdy-rows">
+    {rows.map((r) => (
+      <div class="rdy-row">
+        <span class="rdy-row-label">{r.label}</span>
+        <span class="rdy-row-dots">
+          <span class={`rdy-state rdy-state--${r.state}`}></span>
+        </span>
+        <span class="rdy-row-value">{r.value}</span>
+      </div>
+    ))}
+  </div>
+
+  <p class="rdy-note">
+    Taproot took ~4.5 years from BIP to activation. BIP 360/361 has no reference implementation
+    yet. If you are pricing urgency, price years, not months.
+  </p>
+</section>

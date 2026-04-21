@@ -1,0 +1,97 @@
+---
+type Phase = {
+  id: string;
+  yearLabel: string;
+  offset: number;
+  title: string;
+  body: string;
+  kind: "marker" | "activation" | "phase";
+  severity?: "high" | "low" | "info";
+  sevLabel?: string;
+};
+
+const phases: Phase[] = [
+  {
+    id: "now",
+    yearLabel: "now",
+    offset: 0,
+    title: "Draft",
+    body: "No reference implementation. BIP authors circulating for review on the bitcoin-dev list.",
+    kind: "marker",
+  },
+  {
+    id: "activation",
+    yearLabel: "year 0",
+    offset: 18,
+    title: "Hypothetical activation",
+    body: "Soft fork lock-in. P2MR outputs (bc1z…) become spendable. Nothing freezes yet.",
+    kind: "activation",
+  },
+  {
+    id: "A",
+    yearLabel: "year 3",
+    offset: 45,
+    title: "Phase A — no new deposits",
+    body: "Standard nodes reject new outputs to P2PK, P2PKH, P2WPKH, P2TR key-path. Existing coins are untouched.",
+    kind: "phase",
+    severity: "low",
+    sevLabel: "advisory",
+  },
+  {
+    id: "B",
+    yearLabel: "year 5",
+    offset: 72,
+    title: "Phase B — signatures invalid",
+    body: "Consensus change: ECDSA and Schnorr verifications stop succeeding for legacy output types. Unmigrated coins are frozen.",
+    kind: "phase",
+    severity: "high",
+    sevLabel: "freeze risk",
+  },
+  {
+    id: "C",
+    yearLabel: "TBD",
+    offset: 95,
+    title: "Phase C — zk-recovery",
+    body: "A zero-knowledge circuit lets owners with BIP-39 seeds move frozen coins to P2MR. Not yet specified. Pre-2013 wallets likely excluded.",
+    kind: "phase",
+    severity: "info",
+    sevLabel: "recovery",
+  },
+];
+
+const cards = phases.filter((p) => p.kind !== "marker");
+---
+
+<section class="bip-section">
+  <div class="sec-eyebrow">03 — The shape of it</div>
+  <h2 class="sec-title">Three phases, one clock.</h2>
+  <p class="sec-lede">
+    The years are illustrative — activation hasn't happened and the clock starts from there, not
+    today. What matters is the ordering.
+  </p>
+
+  <div class="tl-track">
+    <div class="tl-line"></div>
+    {phases.map((p) => (
+      <div class={`tl-node tl-node--${p.kind}`} style={`left: ${p.offset}%;`}>
+        <div class="tl-node-dot"></div>
+        <div class="tl-node-year">{p.yearLabel}</div>
+      </div>
+    ))}
+  </div>
+
+  <div class="tl-cards">
+    {cards.map((p) => (
+      <div class={`tl-card tl-card--${p.severity ?? "neutral"}`}>
+        <div class="tl-card-hd">
+          <span class="tl-card-year">{p.yearLabel}</span>
+          {p.severity && (
+            <span class={`tl-card-sev tl-card-sev--${p.severity}`}>{p.sevLabel}</span>
+          )}
+        </div>
+        <div class="tl-card-title">{p.title}</div>
+        <div class="tl-card-body">{p.body}</div>
+      </div>
+    ))}
+  </div>
+</section>

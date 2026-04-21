@@ -1,0 +1,150 @@
+---
+export interface Combination {
+  walletVintage: string;
+  addressType: string;
+  severity: "high" | "medium" | "low" | "info";
+  title: string;
+  text: string;
+}
+
+export interface Props {
+  impacts: { combinations: Combination[] };
+}
+
+const { impacts } = Astro.props;
+
+const vintageOpts = [
+  { v: "pre-2013", l: "Before 2013", hint: "" },
+  { v: "2013-2021", l: "2013 – 2021", hint: "" },
+  { v: "2021-plus", l: "2021 or later", hint: "" },
+  { v: "unsure", l: "Not sure", hint: "" },
+];
+
+const addrOpts = [
+  { v: "p2pk", l: "P2PK (early)", hint: "pubkey on-chain" },
+  { v: "p2pkh", l: "Legacy (1…)", hint: "P2PKH" },
+  { v: "segwit", l: "SegWit (bc1q…)", hint: "P2WPKH" },
+  { v: "taproot", l: "Taproot (bc1p…)", hint: "P2TR" },
+  { v: "unsure", l: "Not sure", hint: "" },
+];
+
+const initialVintage = "2013-2021";
+const initialAddr = "segwit";
+
+const sevLabel: Record<string, string> = {
+  high: "High risk",
+  medium: "Medium risk",
+  low: "Low urgency",
+  info: "Informational",
+};
+
+const fallback = impacts.combinations.find(
+  (c) => c.walletVintage === "unsure" && c.addressType === "unsure",
+) ?? impacts.combinations[impacts.combinations.length - 1];
+---
+
+<section class="bip-section">
+  <div class="sec-eyebrow">01 — Does it affect you?</div>
+  <h2 class="sec-title">Let's get the personal question out of the way.</h2>
+  <p class="sec-lede">
+    Tell us roughly when and how you hold, and we'll tell you how exposed you are. No wallet
+    connection, no tracking — this is a lookup, not a scan.
+  </p>
+
+  <div class="pi-card" data-personal-impact>
+    <div class="pi-sentence">
+      <span class="pi-sentence-pre">I hold bitcoin from</span>
+      <span class="pi-sel" data-pi-sel="vintage" data-value={initialVintage}>
+        <button type="button" class="pi-sel-btn" data-pi-trigger aria-haspopup="listbox" aria-expanded="false">
+          <span data-pi-label>{vintageOpts.find((o) => o.v === initialVintage)!.l}</span>
+          <span class="pi-sel-chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="pi-sel-pop" role="listbox">
+          {vintageOpts.map((o) => (
+            <button
+              type="button"
+              class="pi-sel-opt"
+              role="option"
+              data-pi-opt={o.v}
+              data-pi-label={o.l}
+              aria-selected={o.v === initialVintage ? "true" : "false"}
+            >
+              <span>{o.l}</span>
+              {o.hint && <span class="pi-sel-opt-hint">{o.hint}</span>}
+            </button>
+          ))}
+        </div>
+      </span>
+      <span class="pi-sentence-pre">in a</span>
+      <span class="pi-sel" data-pi-sel="addr" data-value={initialAddr}>
+        <button type="button" class="pi-sel-btn" data-pi-trigger aria-haspopup="listbox" aria-expanded="false">
+          <span data-pi-label>{addrOpts.find((o) => o.v === initialAddr)!.l}</span>
+          <span class="pi-sel-chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="pi-sel-pop" role="listbox">
+          {addrOpts.map((o) => (
+            <button
+              type="button"
+              class="pi-sel-opt"
+              role="option"
+              data-pi-opt={o.v}
+              data-pi-label={o.l}
+              aria-selected={o.v === initialAddr ? "true" : "false"}
+            >
+              <span>{o.l}</span>
+              {o.hint && <span class="pi-sel-opt-hint">{o.hint}</span>}
+            </button>
+          ))}
+        </div>
+      </span>
+      <span class="pi-sentence-pre">address.</span>
+    </div>
+
+    <div class="pi-verdicts">
+      {impacts.combinations.map((c) => {
+        const vintageLabel = vintageOpts.find((o) => o.v === c.walletVintage)?.l ?? c.walletVintage;
+        const addrLabel = addrOpts.find((o) => o.v === c.addressType)?.l ?? c.addressType;
+        const isActive = c.walletVintage === initialVintage && c.addressType === initialAddr;
+        return (
+          <div
+            class={`pi-verdict pi-verdict--${c.severity}`}
+            data-verdict
+            data-vintage={c.walletVintage}
+            data-addr={c.addressType}
+            data-active={isActive ? "true" : "false"}
+          >
+            <div class="pi-verdict-bar"></div>
+            <div class="pi-verdict-body">
+              <div class="pi-verdict-hd">
+                <span class="pi-verdict-sev">{sevLabel[c.severity]}</span>
+                <span class="pi-verdict-dot">·</span>
+                <span class="pi-verdict-combo">{vintageLabel} / {addrLabel}</span>
+              </div>
+              <div class="pi-verdict-title">{c.title}</div>
+              <p class="pi-verdict-text">{c.text}</p>
+            </div>
+          </div>
+        );
+      })}
+      <div
+        class={`pi-verdict pi-verdict--${fallback.severity}`}
+        data-verdict-fallback
+        data-active="false"
+      >
+        <div class="pi-verdict-bar"></div>
+        <div class="pi-verdict-body">
+          <div class="pi-verdict-hd">
+            <span class="pi-verdict-sev">{sevLabel[fallback.severity]}</span>
+          </div>
+          <div class="pi-verdict-title">{fallback.title}</div>
+          <p class="pi-verdict-text">{fallback.text}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pi-footnote">
+      The page never tells you what to do. This is the closest we come: a lookup of public
+      information against the combination you described.
+    </div>
+  </div>
+</section>

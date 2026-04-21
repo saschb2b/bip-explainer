@@ -4,25 +4,46 @@ export interface Props {
 }
 
 const { lastUpdated } = Astro.props;
+
+const updatedLabel = new Date(lastUpdated).toLocaleDateString("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
 ---
 
-<footer class="border-t border-gray-100 bg-gray-50 mt-auto">
-  <div class="max-w-3xl mx-auto px-6 py-10">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-      <p class="text-sm text-gray-500">Page last updated <span class="font-medium text-gray-700">{lastUpdated}</span></p>
-      <div class="flex items-center gap-4">
-        <a href="https://github.com/sascha/bip-explainer" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 hover:text-gray-900 underline underline-offset-2">Contribute on GitHub</a>
-        <a href="https://github.com/sascha/bip-explainer/issues" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 hover:text-gray-900 underline underline-offset-2">Suggest a change</a>
+<footer class="ft">
+  <div class="ft-grid">
+    <div>
+      <div class="ft-brand">
+        <span class="ft-brand-mark">◇</span>
+        <span class="ft-brand-name">BIP Explainer</span>
       </div>
-    </div>
-
-    <div class="bg-white rounded-lg border border-gray-100 p-5">
-      <h3 class="text-sm font-semibold text-gray-900 mb-2">Editorial policy</h3>
-      <p class="text-sm text-gray-600 leading-relaxed">
-        This page is maintained as an open-source reference. Every claim links to a primary source.
-        Disagreement types are editorial judgments made transparently; if you think a tag is wrong, open an issue.
-        The page never tells you what to do — it describes what different people believe and why.
+      <p class="ft-mission">
+        A layered explainer for protocol proposals. Built to help non-developers form a defensible view in 15 minutes.
       </p>
+    </div>
+    <div>
+      <div class="ft-col-hd">Editorial policy</div>
+      <ul class="ft-list">
+        <li>Every disagreement is tagged by type.</li>
+        <li>Every voice links to a primary source.</li>
+        <li>The page never tells you what to do.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="ft-col-hd">This page</div>
+      <ul class="ft-list">
+        <li>Last updated · {updatedLabel}</li>
+        <li>
+          <a href="https://github.com/saschb2b/bip-explainer" target="_blank" rel="noopener noreferrer">
+            Contribute on GitHub →
+          </a>
+        </li>
+        <li>
+          <a href="#top" data-back-to-top>Back to top ↑</a>
+        </li>
+      </ul>
     </div>
   </div>
 </footer>

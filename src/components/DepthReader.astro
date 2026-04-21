@@ -1,0 +1,260 @@
+---
+export interface Props {
+  content: string;
+}
+
+const { content } = Astro.props;
+
+type Tier = {
+  key: string;
+  n: string;
+  label: string;
+  minutes: string;
+  matchTitle: RegExp;
+};
+
+const tiers: Tier[] = [
+  { key: "plain", n: "01", label: "Plain English", minutes: "2 min", matchTitle: /^plain english$/i },
+  { key: "informed", n: "02", label: "Informed user", minutes: "4 min", matchTitle: /^informed user$/i },
+  { key: "dev", n: "03", label: "Developer", minutes: "8 min", matchTitle: /^developer$/i },
+  { key: "spec", n: "04", label: "Spec & primary sources", minutes: "go deep", matchTitle: /^spec$/i },
+];
+
+const terms: { match: RegExp; def: string }[] = [
+  {
+    match: /\bPay-to-Merkle-Root \(P2MR\)\b/,
+    def: 'A new output type similar to Taproot but without the quantum-vulnerable "key-path spend." Your public key is never revealed on-chain, closing the window for a quantum attacker to derive your private key.',
+  },
+  {
+    match: /\bECDSA\b/,
+    def: "The original Bitcoin signature scheme. Quantum-vulnerable once the public key is revealed.",
+  },
+  {
+    match: /\bSchnorr\b/,
+    def: "Taproot's signature scheme. Also quantum-vulnerable when the public key is exposed.",
+  },
+];
+
+const specDomains: { match: RegExp; label: string }[] = [
+  { match: /github\.com\/bitcoin\/bips/, label: "bitcoin/bips" },
+  { match: /groups\.google\.com/, label: "groups.google.com" },
+  { match: /x\.com/, label: "x.com" },
+  { match: /github\.com/, label: "github.com" },
+];
+
+function escapeHtml(s: string) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function applyInline(s: string): string {
+  let out = escapeHtml(s);
+  out = out.replace(/`([^`]+)`/g, "<code>$1</code>");
+  out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  return out;
+}
+
+function applyTerms(html: string): string {
+  let out = html;
+  for (const t of terms) {
+    out = out.replace(t.match, (m) =>
+      `<span class="term" tabindex="0">${m}<span class="term-pop" role="tooltip">${escapeHtml(t.def)}</span></span>`
+    );
+  }
+  return out;
+}
+
+function getDomain(url: string): string {
+  for (const d of specDomains) if (d.match.test(url)) return d.label;
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
+type Block =
+  | { kind: "paragraph"; html: string }
+  | { kind: "phaseList"; items: { key: string; body: string }[] }
+  | { kind: "tradeoffs"; items: string[] }
+  | { kind: "specList"; items: { url: string; label: string; domain: string }[] };
+
+function parseTier(key: string, raw: string): Block[] {
+  const lines = raw.replace(/\r\n/g, "\n").split("\n");
+  const blocks: Block[] = [];
+
+  let para: string[] = [];
+  let listMode: "phase" | "tradeoff" | "spec" | null = null;
+  let listItems: any[] = [];
+
+  const flushPara = () => {
+    if (para.length === 0) return;
+    const joined = para.join(" ").trim();
+    if (joined) {
+      const html = applyTerms(applyInline(joined));
+      blocks.push({ kind: "paragraph", html });
+    }
+    para = [];
+  };
+
+  const flushList = () => {
+    if (!listMode) return;
+    if (listMode === "phase") {
+      blocks.push({ kind: "phaseList", items: listItems });
+    } else if (listMode === "tradeoff") {
+      blocks.push({ kind: "tradeoffs", items: listItems });
+    } else if (listMode === "spec") {
+      blocks.push({ kind: "specList", items: listItems });
+    }
+    listMode = null;
+    listItems = [];
+  };
+
+  for (const raw of lines) {
+    const line = raw.trim();
+
+    if (line === "") {
+      flushPara();
+      flushList();
+      continue;
+    }
+
+    if (line.startsWith("- ")) {
+      flushPara();
+      const item = line.slice(2).trim();
+
+      if (key === "spec") {
+        listMode = "spec";
+        const m = item.match(/^(.+?):\s*(https?:\/\/\S+)$/);
+        if (m) {
+          listItems.push({ url: m[2], label: m[1].trim(), domain: getDomain(m[2]) });
+        } else {
+          listItems.push({ url: "", label: item, domain: "" });
+        }
+        continue;
+      }
+
+      if (key === "informed") {
+        const m = item.match(/^Phase\s+(\w+)\s*\(([^)]+)\):\s*(.*)$/i);
+        if (m) {
+          listMode = "phase";
+          listItems.push({
+            key: `Phase ${m[1].toUpperCase()} · ${m[2].trim()}`,
+            body: applyTerms(applyInline(m[3].trim())),
+          });
+          continue;
+        }
+      }
+
+      if (key === "dev") {
+        listMode = "tradeoff";
+        listItems.push(applyTerms(applyInline(item)));
+        continue;
+      }
+
+      listMode = "phase";
+      listItems.push({ key: "", body: applyTerms(applyInline(item)) });
+      continue;
+    }
+
+    if (/^Trade-offs:\s*$/i.test(line)) {
+      flushPara();
+      flushList();
+      continue;
+    }
+
+    flushList();
+    para.push(line);
+  }
+
+  flushPara();
+  flushList();
+
+  return blocks;
+}
+
+const sections = content
+  .replace(/\r\n/g, "\n")
+  .split(/^## Level:\s*/m)
+  .map((s) => s.trim())
+  .filter(Boolean)
+  .map((block) => {
+    const newlineIdx = block.indexOf("\n");
+    const title = newlineIdx >= 0 ? block.slice(0, newlineIdx).trim() : block.trim();
+    const body = newlineIdx >= 0 ? block.slice(newlineIdx + 1) : "";
+    return { title, body };
+  });
+
+const tierBlocks = tiers.map((t) => {
+  const matched = sections.find((s) => t.matchTitle.test(s.title));
+  const blocks = matched ? parseTier(t.key, matched.body) : [];
+  return { ...t, blocks };
+});
+---
+
+<section class="bip-section">
+  <div class="sec-eyebrow">02 — Understand it</div>
+  <h2 class="sec-title">Read up to the level you need.</h2>
+  <p class="sec-lede">
+    Four passes over the same proposal. Each one adds detail without contradicting the last. Expand
+    the next tier when you want more.
+  </p>
+
+  <div class="dr-ladder">
+    {tierBlocks.map((t, i) => (
+      <div class="dr-tier" data-dr-tier data-open={i === 0 ? "true" : "false"}>
+        <button type="button" class="dr-tier-head" data-dr-toggle aria-expanded={i === 0 ? "true" : "false"}>
+          <span class="dr-tier-n">{t.n}</span>
+          <span class="dr-tier-lbl">{t.label}</span>
+          <span class="dr-tier-min">{t.minutes}</span>
+          <span class="dr-tier-chev" aria-hidden="true"></span>
+        </button>
+        <div class="dr-tier-body">
+          {t.blocks.map((b) => {
+            if (b.kind === "paragraph") return <p set:html={b.html} />;
+            if (b.kind === "phaseList") {
+              return (
+                <ul class="dr-list">
+                  {b.items.map((item) => (
+                    <li>
+                      <span class="dr-list-k">{item.key}</span>
+                      <span set:html={item.body} />
+                    </li>
+                  ))}
+                </ul>
+              );
+            }
+            if (b.kind === "tradeoffs") {
+              return (
+                <div class="dr-callout">
+                  <div class="dr-callout-hd">Trade-offs</div>
+                  <ul>
+                    {b.items.map((html) => <li set:html={html} />)}
+                  </ul>
+                </div>
+              );
+            }
+            if (b.kind === "specList") {
+              return (
+                <ul class="dr-spec-list">
+                  {b.items.map((item) => (
+                    <li>
+                      {item.url ? (
+                        <a href={item.url} target="_blank" rel="noopener noreferrer">
+                          <span>{item.label}</span>
+                          <span class="dr-spec-dom">{item.domain}</span>
+                        </a>
+                      ) : (
+                        <span>{item.label}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              );
+            }
+            return null;
+          })}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>

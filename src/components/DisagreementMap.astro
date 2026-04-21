@@ -3,47 +3,87 @@ export interface Props {
   disagreements: {
     title: string;
     summary: string;
-    type: string;
-    typeDescription: string;
+    type: "definitional" | "factual" | "values" | "technical-judgment";
+    typeDescription?: string;
     link: string;
   }[];
 }
 
 const { disagreements } = Astro.props;
 
-const typeStyles: Record<string, string> = {
-  definitional: "bg-slate-50 text-slate-700 border-slate-200",
-  factual: "bg-blue-50 text-blue-700 border-blue-200",
-  values: "bg-amber-50 text-amber-700 border-amber-200",
-  "technical-judgment": "bg-purple-50 text-purple-700 border-purple-200",
+const typeMeta: Record<
+  string,
+  { label: string; hint: string; axis: "resolvable" | "unresolvable" }
+> = {
+  definitional: {
+    label: "Definitional",
+    hint: "Same word, different meaning",
+    axis: "resolvable",
+  },
+  factual: {
+    label: "Factual",
+    hint: "Evidence could settle it",
+    axis: "resolvable",
+  },
+  values: {
+    label: "Values",
+    hint: "No single correct answer",
+    axis: "unresolvable",
+  },
+  "technical-judgment": {
+    label: "Technical judgment",
+    hint: "Experts weigh trade-offs differently",
+    axis: "unresolvable",
+  },
 };
 
-const typeLabels: Record<string, string> = {
-  definitional: "Definitional",
-  factual: "Factual",
-  values: "Values",
-  "technical-judgment": "Technical judgment",
-};
+const order = ["definitional", "factual", "values", "technical-judgment"];
+const sorted = [...disagreements].sort(
+  (a, b) => order.indexOf(a.type) - order.indexOf(b.type),
+);
 ---
 
-<section class="py-12 sm:py-16 bg-gray-50" id="disagreements">
-  <div class="max-w-3xl mx-auto px-6">
-    <h2 class="text-xl font-semibold text-gray-900 mb-2">Disagreement map</h2>
-    <p class="text-gray-600 mb-8 max-w-xl">Not all objections are the same. Each card is tagged by the kind of disagreement it represents.</p>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {disagreements.map((d) => (
-        <div class="bg-white rounded-lg border border-gray-100 p-5 shadow-sm hover:shadow transition-shadow">
-          <div class="flex items-start justify-between gap-3 mb-3">
-            <h3 class="font-semibold text-gray-900 leading-snug">{d.title}</h3>
-            <span class={`tooltip shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${typeStyles[d.type] || typeStyles.definitional}`} tabindex="0">
-              {typeLabels[d.type] || d.type}
-              <span class="tooltip-text">{d.typeDescription}</span>
-            </span>
-          </div>
-          <p class="text-sm text-gray-600 leading-relaxed mb-4">{d.summary}</p>
-          <a href={d.link} target="_blank" rel="noopener noreferrer" class="text-sm text-accent-700 hover:text-accent-900 font-medium underline underline-offset-2">Read more →</a>
-        </div>
-      ))}
+<section class="bip-section">
+  <div class="sec-eyebrow">05 — Where it's contested</div>
+  <h2 class="sec-title">Four live disagreements, mapped by type.</h2>
+  <p class="sec-lede">
+    Not all arguments are the same argument. The top row could in principle be resolved with
+    evidence or shared definitions. The bottom row is genuinely unresolvable — reasonable people can
+    disagree.
+  </p>
+
+  <div class="dm-matrix">
+    <div class="dm-matrix-axis dm-matrix-axis--y" aria-hidden="true">
+      <span class="dm-axis-top">Resolvable</span>
+      <span class="dm-axis-bot">Irreducible</span>
+    </div>
+    <div>
+      <div class="dm-axis-mobile">Resolvable</div>
+      <div class="dm-grid">
+        {sorted.map((d, i) => {
+          const m = typeMeta[d.type];
+          const isFirstUnresolvable = m.axis === "unresolvable" && (i === 0 || typeMeta[sorted[i - 1].type].axis !== "unresolvable");
+          return (
+            <>
+              {isFirstUnresolvable && <div class="dm-axis-mobile dm-axis-mobile--inline">Irreducible</div>}
+              <div class={`dm-cell dm-cell--${m.axis} dm-cell--${d.type}`}>
+                <span class={`dm-tag dm-tag--${d.type}`}>
+                  <span class="dm-tag-dot"></span>
+                  {m.label}
+                </span>
+                <div class="dm-cell-title">{d.title}</div>
+                <div class="dm-cell-body">{d.summary}</div>
+                <div class="dm-cell-foot">
+                  <span class="dm-cell-hint">{m.hint}</span>
+                  <a class="dm-cell-link" href={d.link} target="_blank" rel="noopener noreferrer">
+                    primary source →
+                  </a>
+                </div>
+              </div>
+            </>
+          );
+        })}
+      </div>
     </div>
   </div>
 </section>
