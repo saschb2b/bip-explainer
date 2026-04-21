@@ -1,0 +1,67 @@
+---
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import yaml from "js-yaml";
+import Layout from "../layouts/Layout.astro";
+import TopBar from "../components/TopBar.astro";
+import Header from "../components/Header.astro";
+import DepthToggle from "../components/DepthToggle.astro";
+import DisagreementMap from "../components/DisagreementMap.astro";
+import ImpactSection from "../components/ImpactSection.astro";
+import SignalPanel from "../components/SignalPanel.astro";
+import Voices from "../components/Voices.astro";
+import Footer from "../components/Footer.astro";
+
+const base = resolve(process.cwd(), "content/proposals/bitcoin-bip-360-361");
+
+function readJson(path: string) {
+    return JSON.parse(readFileSync(path, "utf-8"));
+}
+
+function readMd(path: string) {
+    const raw = readFileSync(path, "utf-8");
+    const frontmatterMatch = raw.match(
+        /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/,
+    );
+    if (!frontmatterMatch) return { frontmatter: {}, body: raw };
+    const frontmatter = yaml.load(frontmatterMatch[1]) as Record<string, any>;
+    const body = frontmatterMatch[2];
+    return { frontmatter, body };
+}
+
+const md = readMd(resolve(base, "index.md"));
+const disagreements = readJson(resolve(base, "disagreements.json"));
+const voices = readJson(resolve(base, "voices.json"));
+const impacts = readJson(resolve(base, "impacts.json"));
+
+const frontmatter = md.frontmatter;
+const rawBody = md.body;
+---
+
+<Layout
+    title={`${frontmatter.title} — BIP Explainer`}
+    description={frontmatter.subtitle}
+>
+    <TopBar />
+    <Header
+        breadcrumb={frontmatter.breadcrumb}
+        title={frontmatter.title}
+        subtitle={frontmatter.subtitle}
+        status={frontmatter.status}
+        affects={frontmatter.affects}
+        lastUpdated={frontmatter.lastUpdated}
+    />
+
+    <main>
+        <DepthToggle content={rawBody} />
+        <DisagreementMap disagreements={disagreements} />
+        <ImpactSection impacts={impacts} />
+        <SignalPanel
+            signals={frontmatter.signals}
+            lastUpdated={frontmatter.lastUpdated}
+        />
+        <Voices voices={voices} />
+    </main>
+
+    <Footer lastUpdated={frontmatter.lastUpdated} />
+</Layout>

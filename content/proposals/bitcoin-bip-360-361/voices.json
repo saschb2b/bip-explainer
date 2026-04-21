@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Jameson Lopp",
+    "role": "Co-author, BIP 361",
+    "roleType": "author",
+    "position": "\"I don't like it either. I wrote it because I like the alternative even less.\" Advocates a phased sunset as the least-bad defense against a quantum theft event.",
+    "sourceUrl": "https://x.com/lopp/status/XXXXX"
+  },
+  {
+    "name": "Charles Hoskinson",
+    "role": "Founder, Cardano / IOG",
+    "roleType": "critic",
+    "position": "Characterized BIP 361 as authoritarian confiscation and argued that freezing coins violates the core social contract of Bitcoin. Suggested that user-driven migration is preferable to consensus-enforced freezes.",
+    "sourceUrl": "https://x.com/IOHK_Charles/status/XXXXX"
+  },
+  {
+    "name": "Eli Ben-Sasson / StarkWare",
+    "role": "Co-founder, StarkWare",
+    "roleType": "alternative",
+    "position": "Proposes replacing ECDSA with hash-based cryptography and STARK proofs (QSB/NTC), which could compress large post-quantum signatures into small on-chain footprints without freezing legacy coins.",
+    "sourceUrl": "https://starkware.co/blog/"
+  },
+  {
+    "name": "BitMEX Research",
+    "role": "Research team",
+    "roleType": "alternative",
+    "position": "Proposed a \"Canary Fund\" reactive model: publish a quantum-vulnerable canary address; a valid spend from it triggers an emergency soft fork, avoiding premature freezes while preserving a rapid response option.",
+    "sourceUrl": "https://blog.bitmex.com/"
+  }
+]

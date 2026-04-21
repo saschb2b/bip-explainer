@@ -1,0 +1,42 @@
+---
+export interface Props {
+  breadcrumb: { label: string; href?: string }[];
+  title: string;
+  subtitle: string;
+  status: string;
+  affects: string;
+  lastUpdated: string;
+}
+
+const { breadcrumb, title, subtitle, status, affects, lastUpdated } = Astro.props;
+---
+
+<header class="border-b border-gray-100">
+  <div class="max-w-3xl mx-auto px-6 pt-10 pb-8">
+    <nav class="text-sm text-gray-500 mb-5" aria-label="Breadcrumb">
+      <ol class="flex flex-wrap items-center gap-2">
+        {breadcrumb.map((crumb, i) => (
+          <li class="flex items-center gap-2">
+            {i > 0 && <span class="text-gray-300">›</span>}
+            {crumb.href ? (
+              <a href={crumb.href} class="hover:text-gray-800 transition-colors">{crumb.label}</a>
+            ) : (
+              <span class={i === breadcrumb.length - 1 ? "text-gray-800 font-medium" : ""}>{crumb.label}</span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mb-3">{title}</h1>
+    <p class="text-lg text-gray-600 leading-relaxed max-w-2xl">{subtitle}</p>
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-amber-50 text-amber-700 border border-amber-100">
+        {status}
+      </span>
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-gray-50 text-gray-700 border border-gray-100">
+        Affects {affects}
+      </span>
+      <span class="text-sm text-gray-400">Updated {lastUpdated}</span>
+    </div>
+  </div>
+</header>

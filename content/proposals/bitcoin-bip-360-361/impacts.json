@@ -1,0 +1,144 @@
+{
+  "combinations": [
+    {
+      "walletVintage": "pre-2013",
+      "addressType": "p2pk",
+      "severity": "high",
+      "title": "Highest risk — zk-recovery likely unavailable",
+      "text": "Your coins are in P2PK addresses with permanently exposed public keys and no BIP-39 seed. If BIP 361 activates, your only recovery hope is Phase C, which may not support early wallet formats. Move them to a modern wallet as soon as P2MR is available."
+    },
+    {
+      "walletVintage": "pre-2013",
+      "addressType": "p2pkh",
+      "severity": "high",
+      "title": "High risk — public key exposed on first spend",
+      "text": "If you have ever spent from this address, your public key is visible on-chain. BIP 361's sunset would eventually freeze any coins still in legacy formats. Migrate to a P2MR-compatible wallet before Phase A."
+    },
+    {
+      "walletVintage": "pre-2013",
+      "addressType": "taproot",
+      "severity": "high",
+      "title": "High risk — key-path spend exposed",
+      "text": "Taproot key-path spends reveal your internal public key. BIP 360 removes this path entirely in P2MR. Re-send your taproot UTXOs to P2MR addresses once wallets support them."
+    },
+    {
+      "walletVintage": "pre-2013",
+      "addressType": "segwit",
+      "severity": "medium",
+      "title": "Medium risk — migrate before Phase A",
+      "text": "SegWit v0 (P2WPKH) still uses ECDSA and will be sunset. You likely have a seed phrase, so zk-recovery may work in Phase C, but do not rely on it. Migrate proactively."
+    },
+    {
+      "walletVintage": "pre-2013",
+      "addressType": "unsure",
+      "severity": "high",
+      "title": "High risk — identify your wallet first",
+      "text": "Pre-2013 wallets are almost certainly P2PK or early P2PKH. Both have exposed public keys. Treat this as highest risk until you confirm otherwise."
+    },
+    {
+      "walletVintage": "2013-2021",
+      "addressType": "p2pk",
+      "severity": "high",
+      "title": "Highest risk — zk-recovery likely unavailable",
+      "text": "Your coins are in P2PK addresses with permanently exposed public keys and no BIP-39 seed. If BIP 361 activates, your only recovery hope is Phase C, which may not support early wallet formats. Move them to a modern wallet as soon as P2MR is available."
+    },
+    {
+      "walletVintage": "2013-2021",
+      "addressType": "p2pkh",
+      "severity": "medium",
+      "title": "Medium risk — migrate before sunset",
+      "text": "Standard P2PKH addresses are vulnerable once spent. You have time, but do not wait until Phase B. Move to a P2MR-compatible wallet well before the deadline."
+    },
+    {
+      "walletVintage": "2013-2021",
+      "addressType": "taproot",
+      "severity": "high",
+      "title": "High risk — key-path spend exposed",
+      "text": "Taproot key-path spends reveal your internal public key. BIP 360 removes this path entirely in P2MR. Re-send your taproot UTXOs to P2MR addresses once wallets support them."
+    },
+    {
+      "walletVintage": "2013-2021",
+      "addressType": "segwit",
+      "severity": "low",
+      "title": "Low urgency — but verify your backup",
+      "text": "You have a modern seed phrase and SegWit v0 outputs. The risk is manageable if you migrate before Phase A (~3 years post-activation). Use this time to verify your backup and wait for wallet support."
+    },
+    {
+      "walletVintage": "2013-2021",
+      "addressType": "unsure",
+      "severity": "medium",
+      "title": "Medium risk — check your address prefix",
+      "text": "Addresses starting with '1' are P2PKH; 'bc1q' is SegWit; 'bc1p' is Taproot. If you don't know, check your wallet's receive history or use a block explorer."
+    },
+    {
+      "walletVintage": "2021-plus",
+      "addressType": "p2pk",
+      "severity": "high",
+      "title": "Highest risk — zk-recovery likely unavailable",
+      "text": "Your coins are in P2PK addresses with permanently exposed public keys and no BIP-39 seed. If BIP 361 activates, your only recovery hope is Phase C, which may not support early wallet formats. Move them to a modern wallet as soon as P2MR is available."
+    },
+    {
+      "walletVintage": "2021-plus",
+      "addressType": "p2pkh",
+      "severity": "medium",
+      "title": "Medium risk — migrate before sunset",
+      "text": "Standard P2PKH addresses are vulnerable once spent. You have time, but do not wait until Phase B. Move to a P2MR-compatible wallet well before the deadline."
+    },
+    {
+      "walletVintage": "2021-plus",
+      "addressType": "taproot",
+      "severity": "high",
+      "title": "High risk — key-path spend exposed",
+      "text": "Taproot key-path spends reveal your internal public key. BIP 360 removes this path entirely in P2MR. Re-send your taproot UTXOs to P2MR addresses once wallets support them."
+    },
+    {
+      "walletVintage": "2021-plus",
+      "addressType": "segwit",
+      "severity": "low",
+      "title": "Low urgency — verify backup and wait for wallets",
+      "text": "You are in the best position: modern seed backup, plenty of time, and no exposed public keys if unspent. Verify your backup, watch for P2MR wallet support, and migrate casually before Phase A."
+    },
+    {
+      "walletVintage": "2021-plus",
+      "addressType": "unsure",
+      "severity": "medium",
+      "title": "Medium risk — identify your address type",
+      "text": "Most wallets created after 2021 default to SegWit or Taproot. Check your receive addresses: 'bc1q' = SegWit, 'bc1p' = Taproot, '1' = legacy P2PKH."
+    },
+    {
+      "walletVintage": "unsure",
+      "addressType": "p2pk",
+      "severity": "high",
+      "title": "Highest risk — zk-recovery likely unavailable",
+      "text": "Your coins are in P2PK addresses with permanently exposed public keys and no BIP-39 seed. If BIP 361 activates, your only recovery hope is Phase C, which may not support early wallet formats. Move them to a modern wallet as soon as P2MR is available."
+    },
+    {
+      "walletVintage": "unsure",
+      "addressType": "p2pkh",
+      "severity": "medium",
+      "title": "Medium risk — migrate before sunset",
+      "text": "Standard P2PKH addresses are vulnerable once spent. You have time, but do not wait until Phase B. Move to a P2MR-compatible wallet well before the deadline."
+    },
+    {
+      "walletVintage": "unsure",
+      "addressType": "taproot",
+      "severity": "high",
+      "title": "High risk — key-path spend exposed",
+      "text": "Taproot key-path spends reveal your internal public key. BIP 360 removes this path entirely in P2MR. Re-send your taproot UTXOs to P2MR addresses once wallets support them."
+    },
+    {
+      "walletVintage": "unsure",
+      "addressType": "segwit",
+      "severity": "low",
+      "title": "Low urgency — verify backup and wait",
+      "text": "You likely have a modern seed phrase and unspent SegWit outputs. Risk is low if you migrate before Phase A. Use this time to verify your backup and wait for wallet updates."
+    },
+    {
+      "walletVintage": "unsure",
+      "addressType": "unsure",
+      "severity": "info",
+      "title": "How to identify your wallet",
+      "text": "Open your wallet and check a receive address. '1...' = legacy P2PKH (medium risk). '3...' = P2SH (medium risk). 'bc1q...' = SegWit (low risk if unspent). 'bc1p...' = Taproot (high risk due to key-path). If your wallet was created before 2013 or you mined early coins, treat as highest risk."
+    }
+  ]
+}

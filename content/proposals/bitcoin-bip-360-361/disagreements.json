@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Is it really a soft fork?",
+    "summary": "Some developers argue that disabling legacy signatures is a de-facto hard fork because it invalidates previously valid transactions. Others maintain that because the change only tightens validation rules for old output types, it fits the standard definition of a soft fork.",
+    "type": "definitional",
+    "typeDescription": "A disagreement about definitions or terminology. Both sides may be using the same word differently.",
+    "link": "https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2026-April/"
+  },
+  {
+    "title": "Pre-2013 coins can't use zk-recovery",
+    "summary": "Satoshi-era P2PK outputs and early mined blocks have no BIP-39 seed phrase. Phase C's zk-recovery mechanism assumes modern wallet backups. If Phase B activates before Phase C is complete, those coins are frozen with no known recovery path.",
+    "type": "factual",
+    "typeDescription": "A disagreement about facts or empirical claims. In principle, evidence could settle this.",
+    "link": "https://github.com/bitcoin/bips/pull/XXXX"
+  },
+  {
+    "title": "Is freezing better than allowing theft?",
+    "summary": "The proposal frames freezing as a defensive measure: frozen coins slightly increase everyone else's purchasing power, whereas stolen coins destroy trust and value. Critics call this a taking of property rights, arguing that the network should not sacrifice individual ownership for collective security.",
+    "type": "values",
+    "typeDescription": "A disagreement about priorities, ethics, or what should be valued. There is no single correct answer.",
+    "link": "https://decrypt.co/364450/new-bitcoin-proposal-would-freeze-coins-to-counter-quantum-threat"
+  },
+  {
+    "title": "How urgent is the quantum threat?",
+    "summary": "Expert surveys estimate a 28–49% chance of a cryptographically relevant quantum computer within 10 years, but timelines vary wildly. Some argue that premature action burdens users now for a threat that may not materialize for decades; others point to Google's recent qubit advances and federal 2035 deadlines as evidence that preparation cannot wait.",
+    "type": "technical-judgment",
+    "typeDescription": "A disagreement among experts about trade-offs, risks, or the weight of evidence. Reasonable people can differ.",
+    "link": "https://www.galaxy.com/insights/research/bitcoin-quantum-computing-risk"
+  }
+]
